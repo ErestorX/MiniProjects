@@ -64,6 +64,20 @@ def makePresentorReviewersList(studentsList):
     return trinomes
 
 
+def send_BSstudents_to_end(trinomes, list_BSstudents):
+    """
+    Return a list of trinomes with BS students at the end
+    """
+    trinomes_BS = []
+    trinomes_others = []
+    for trinome in trinomes:
+        if trinome["Presentor"] in list_BSstudents:
+            trinomes_BS.append(trinome)
+        else:
+            trinomes_others.append(trinome)
+    return trinomes_others + trinomes_BS
+
+
 if __name__ == '__main__':
     args = parser.parse_args()
     if isinstance(args.date, type(datetime.date.today())):
@@ -73,8 +87,9 @@ if __name__ == '__main__':
         date = datetime.date(int(Y), int(M), int(D))
 
     PhD, MS, BS = loadStudentLists(os.path.join(os.path.dirname(__file__), "studentLists.json"))
-    paperReadingPresentors = PhD + MS
+    paperReadingPresentors = PhD + MS + BS
     trinomes = makePresentorReviewersList(paperReadingPresentors)
+    trinomes = send_BSstudents_to_end(trinomes, BS)
     mondays = makeMondayListFromStart(date, len(trinomes))
 
     for i in range(len(trinomes)):
